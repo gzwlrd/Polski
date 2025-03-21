@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -224,15 +224,15 @@
         const db = getDatabase(app);
         const auth = getAuth();
 
-        let allData = {}; // Stocker les données globales
+        let allData = {}; // Przechowywanie globalnych danych
 
         function fetchData() {
             const birthdatesRef = ref(db, 'birthdates');
             onValue(birthdatesRef, (snapshot) => {
-                allData = snapshot.val() || {}; // Stocker les données dans une variable globale
-                console.log(allData); // Afficher les données récupérées
-                updateCountries(); // Mettre à jour les pays disponibles
-                updateCards(); // Mettre à jour les cartes avec les données
+                allData = snapshot.val() || {}; // Przechowywać dane w zmiennej globalnej
+                console.log(allData); // Wyświetlić pobrane dane
+                updateCountries(); // Zaktualizować dostępne kraje
+                updateCards(); // Zaktualizować karty z danymi
             });
         }
 
@@ -240,13 +240,13 @@
             const countrySelect = document.getElementById('countrySelect');
             const countries = new Set();
 
-            // Récupérer les pays uniques à partir des données
+            // Pobierz unikalne kraje z danych
             Object.keys(allData).forEach(userId => {
                 const userData = allData[userId];
-                countries.add(userData.country); // S'assurer que 'country' est une propriété de userData
+                countries.add(userData.country); // Upewnij się, że 'country' jest właściwością userData
             });
 
-            // Remplir le sélecteur de pays
+            // Wypełnij selektor krajów
             countries.forEach(country => {
                 const option = document.createElement('option');
                 option.value = country;
@@ -268,42 +268,42 @@
 
         function updateCards() {
             const grid = document.getElementById('grid');
-            grid.innerHTML = ''; // Effacer le contenu actuel
+            grid.innerHTML = ''; // Wyczyść bieżącą zawartość
 
             const selectedCountry = document.getElementById('countrySelect').value;
             const selectedCategory = document.getElementById('categorySelect').value;
 
             if (Object.keys(allData).length === 0) {
-                grid.innerHTML = '<p>Aucune donnée trouvée.</p>';
+                grid.innerHTML = '<p>Brak danych do wyświetlenia.</p>';
                 return;
             }
 
             const counts = {};
 
-            // Compter par catégorie
+            // Licz przez kategorię
             Object.keys(allData).forEach(userId => {
                 const userData = allData[userId];
                 if (userData.country === selectedCountry || selectedCountry === '') {
                     let key;
                     if (selectedCategory === 'daily') {
-                        key = new Date(userData.date).toLocaleDateString('fr-FR', { weekday: 'long' });
+                        key = new Date(userData.date).toLocaleDateString('pl-PL', { weekday: 'long' });
                     } else if (selectedCategory === 'monthly') {
-                        key = new Date(userData.date).toLocaleDateString('fr-FR', { month: 'long' });
+                        key = new Date(userData.date).toLocaleDateString('pl-PL', { month: 'long' });
                     } else if (selectedCategory === 'yearly') {
                         key = new Date(userData.date).getFullYear();
                     } else if (selectedCategory === 'gender') {
-                        key = userData.gender; // Pour la catégorie 'gender'
+                        key = userData.gender; // Dla kategorii 'gender'
                     } else if (selectedCategory === 'age') {
-                        key = calculateAge(userData.date); // Calculer l'âge
+                        key = calculateAge(userData.date); // Oblicz wiek
                     } else if (selectedCategory === 'population') {
-                        key = userData.country; // Pour la population, utiliser le pays
+                        key = userData.country; // Dla populacji, użyj kraju
                     }
 
                     counts[key] = (counts[key] || 0) + 1;
                 }
             });
 
-            // Afficher les cartes
+            // Wyświetl karty
             Object.keys(counts).forEach(key => {
                 const card = document.createElement('div');
                 card.className = 'card small-card';
@@ -311,13 +311,13 @@
                 grid.appendChild(card);
             });
 
-            // Si aucune donnée n'est trouvée
+            // Jeśli nie znaleziono żadnych danych
             if (grid.innerHTML === '') {
-                grid.innerHTML = '<p>Aucune donnée trouvée.</p>';
+                grid.innerHTML = '<p>Brak danych do wyświetlenia.</p>';
             }
         }
 
-        // Fonction de debounce
+        // Funkcja debounce
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -332,26 +332,26 @@
 
             countrySelect.addEventListener('change', debounce(updateCards, 300));
             categorySelect.addEventListener('change', debounce(updateCards, 300));
-            fetchData(); // Charger les données au démarrage
+            fetchData(); // Załaduj dane podczas uruchamiania
 
-            // Ouvrir le modal de soutien
+            // Otwórz modal wsparcia
             document.getElementById('supportBtn').onclick = function() {
                 document.getElementById('supportModal').style.display = 'block';
             };
 
-            // Ouvrir le modal FAQ
+            // Otwórz modal FAQ
             document.getElementById('faqBtn').onclick = function() {
                 document.getElementById('faqModal').style.display = 'block';
             };
 
-            // Fermer le modal
+            // Zamknij modal
             document.querySelectorAll('.close').forEach(closeButton => {
                 closeButton.onclick = function() {
                     this.closest('.modal').style.display = 'none';
                 };
             });
 
-            // Fermer le modal en cliquant à l'extérieur
+            // Zamknij modal klikając na zewnątrz
             window.onclick = function(event) {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
@@ -361,27 +361,27 @@
                 });
             };
 
-            // Ouvrir le lien PayPal
+            // Otwórz link PayPal
             document.getElementById('paypalBtn').onclick = function() {
-                window.location.href = 'https://www.paypal.com/ncp/payment/QN7HEGCSRYJKA';
+                window.location.href = 'https://www.paypal.com/donate/?hosted_button_id=F2EL8FWRAXFSS';
             };
 
-            // Changer la couleur du bouton de soutien chaque seconde
+            // Zmień kolor przycisku wsparcia co sekundę
             const supportButton = document.getElementById('supportBtn');
             let isGreenSupport = false;
 
             setInterval(() => {
-                isGreenSupport = !isGreenSupport; // Alterner la couleur
-                supportButton.style.backgroundColor = isGreenSupport ? 'green' : '#007BFF'; // Changer la couleur
+                isGreenSupport = !isGreenSupport; // Zmień kolor
+                supportButton.style.backgroundColor = isGreenSupport ? 'green' : '#007BFF'; // Zmień kolor
             }, 700);
 
-            // Changer la couleur du bouton PayPal chaque seconde
+            // Zmień kolor przycisku PayPal co sekundę
             const paypalButton = document.getElementById('paypalBtn');
             let isGreenPaypal = false;
 
             setInterval(() => {
-                isGreenPaypal = !isGreenPaypal; // Alterner la couleur
-                paypalButton.style.backgroundColor = isGreenPaypal ? 'green' : '#007BFF'; // Changer la couleur
+                isGreenPaypal = !isGreenPaypal; // Zmień kolor
+                paypalButton.style.backgroundColor = isGreenPaypal ? 'green' : '#007BFF'; // Zmień kolor
             }, 10000);
         });
     </script>
@@ -394,7 +394,7 @@
     </a>
     <div class="copyright-icon">©️</div>
     <a href="Partage.html">
-        <button class="share-button" aria-label="Partager">
+        <button class="share-button" aria-label="Podziel się">
             <i class="fas fa-share-alt"></i>
         </button>
     </a>
@@ -403,50 +403,50 @@
 <div class="divider"></div>
 
 <div class="button-container">
-    <button id="faqBtn" class="button" aria-label="Questions fréquentes">
-        <i class="fas fa-question-circle" style="margin-right: 2px;"></i> Questions
+    <button id="faqBtn" class="button" aria-label="Często zadawane pytania">
+        <i class="fas fa-question-circle" style="margin-right: 2px;"></i> Pytania
     </button>
-    <button id="supportBtn" class="button" aria-label="Soutien" translate="no">
-        <i class="fas fa-hand-holding-heart" style="margin-right: 5px;"></i> Soutenir
+    <button id="supportBtn" class="button" aria-label="Wsparcie" translate="no">
+        <i class="fas fa-hand-holding-heart" style="margin-right: 5px;"></i> Wsparcie
     </button>
 </div>
 
 <div class="divider"></div>
 
 <div class="dashboard">
-    <select class="country-select" aria-label="Sélectionner un pays" id="countrySelect">
-        <option value="">Tous les pays</option>
-        <!-- Les options de pays seront ajoutées dynamiquement -->
+    <select class="country-select" aria-label="Wybierz kraj" id="countrySelect">
+        <option value="">Wszystkie kraje</option>
+        <!-- Opcje krajów będą dodawane dynamicznie -->
     </select>
 
-    <select class="category-select" aria-label="Sélectionner une catégorie" id="categorySelect">
-        <option value="daily">Naissances par jour</option>
-        <option value="monthly">Naissances par mois</option>
-        <option value="yearly">Naissances par an</option>
-        <option value="gender">Genre</option>
-        <option value="age">Âges</option>
-        <option value="population">Population</option>
+    <select class="category-select" aria-label="Wybierz kategorię" id="categorySelect">
+        <option value="daily">Urodziny dzienne</option>
+        <option value="monthly">Urodziny miesięczne</option>
+        <option value="yearly">Urodziny roczne</option>
+        <option value="gender">Płeć</option>
+        <option value="age">Wiek</option>
+        <option value="population">Populacja</option>
     </select>
 
     <div class="grid" id="grid">
-        <!-- Les cartes seront générées ici -->
+        <!-- Karty będą generowane tutaj -->
     </div>
 </div>
 
-<!-- Modal de Soutien -->
+<!-- Modal Wsparcia -->
 <div id="supportModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <p>Merci de soutenir G-Z ! Chaque soutien compte. Grâce à votre aide, nous pouvons continuer à développer ce projet passionnant, créer des analyses innovantes et fournir des statistiques gratuites à un public mondial.</p>
-        <button id="paypalBtn" class="support-button">Soutenir maintenant</button>
+        <p>Dziękujemy za wsparcie G-Z! Każde wsparcie ma znaczenie. Dzięki Twojej pomocy możemy kontynuować rozwój tego ekscytującego projektu, tworzyć innowacyjne analizy i dostarczać darmowe statystyki globalnej publiczności.</p>
+        <button id="paypalBtn" class="support-button">Wspieraj teraz</button>
     </div>
 </div>
 
-<!-- Modal de Questions Fréquemment Posées -->
+<!-- Modal Często Zadawane Pytania -->
 <div id="faqModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        Les statistiques sont mises à jour automatiquement avec chaque envoi dans les tableaux.
+        Statystyki są automatycznie aktualizowane przy każdym przesyłaniu do tabel.
     </div>
 </div>
 
